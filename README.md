@@ -9,7 +9,7 @@ npm start
 
 | Arg     | Description                                                          |
 | ------- | -------------------------------------------------------------------- |
-| `test`  | Use test data stored in "./testInput" file of relevent soltion       |
+| `test`  | Use test data stored in "./testInput" file of the relevent solution  |
 | `today` | Just runs the solution for the current day                           |
 | `all`   | Runs the solutions for all years - defaults to the current year only |
 
