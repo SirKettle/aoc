@@ -15,7 +15,7 @@ export const printResults = (
   const color = day % 2 === 0 ? 'green' : 'red';
   console.log(
     chalk[color](`Day ${paddedDay} (${part}): `) +
-      chalk.hex('FFD700')((answer.toString() + ' ').padEnd(12, '.')) +
+      chalk.hex('FFD700')((answer + ' ').padEnd(12, '.')) +
       chalk[color](
         ` (${Intl.NumberFormat('en-GB').format(solution.timeMs)} ms) `
       )

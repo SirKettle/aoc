@@ -1,6 +1,3 @@
-import path from 'path';
-import { timeSolution } from '../../util/timeSolution';
-import { printResults } from '../../util/printResults';
 import { paths } from '../input/05';
 import { checkIntersection } from 'line-intersect';
 import { uniq } from 'ramda';
@@ -66,13 +63,5 @@ export default () => {
     ]
   );
 
-  // console.log(paths.slice(0, 4));
-  // console.log(vectorPaths.length);
-
-  printResults(path.basename(__filename), [
-    // part1
-    timeSolution(() => partOne(vectorPaths.slice(0))),
-    // part2
-    timeSolution(() => partTwo()),
-  ]);
+  partOne(vectorPaths.slice(0));
 };

@@ -2,15 +2,20 @@ import chalk from 'chalk';
 import path from 'path';
 import { readdir } from 'node:fs/promises';
 import argsParser from 'args-parser';
+import DotEnv from 'dotenv';
+
+DotEnv.config();
+
 import { filterValidDates } from './util/filterValidDates';
 import { printResults } from './util/printResults';
-import { readFileText } from './util/readFileText';
 import { timeSolution } from './util/timeSolution';
+import { getRawInput } from './util/input';
 
 interface IRunOptions {
   today?: boolean;
   all?: boolean;
   test?: boolean;
+  day?: number;
 }
 
 const args = argsParser(process.argv);
@@ -20,29 +25,30 @@ console.clear();
 export const runInput = async (
   inputPath: string,
   func: (input: string) => void,
+  year: number,
   day: number,
   part: number
 ) => {
-  const rawInput = await readFileText(inputPath);
-  printResults(
-    day,
-    part,
-    timeSolution(() => func(rawInput))
-  );
+  try {
+    const rawInput = await getRawInput(inputPath, year, day);
+    printResults(
+      day,
+      part,
+      timeSolution(() => func(rawInput))
+    );
+  } catch (err) {
+    printResults(day, part, { answer: err.message, timeMs: -1 });
+  }
 };
 
 const partFunctionNames = ['partOne', 'partTwo'];
 
 const run = async (year: number, args?: IRunOptions) => {
-  const options: IRunOptions = {
-    today: false,
-    all: false,
-    test: false,
-    ...args,
-  };
   const directory = path.resolve(__dirname, 'years', year.toString());
-  const fileNames = await readdir(directory);
-  const filteredFiles = fileNames.filter(filterValidDates(options.today));
+  const dirNames = await readdir(directory);
+  const filteredDirectories = dirNames.filter(
+    filterValidDates(args.today, args.day)
+  );
 
   console.log(
     '\n' +
@@ -52,8 +58,8 @@ const run = async (year: number, args?: IRunOptions) => {
 -------------------------------\n`)
   );
 
-  for (const fileName of filteredFiles) {
-    const file = require(path.resolve(directory, fileName));
+  for (const dayDirectoryName of filteredDirectories) {
+    const file = require(path.resolve(directory, dayDirectoryName));
 
     let funcIdx = 0;
     while (funcIdx < partFunctionNames.length) {
@@ -62,13 +68,13 @@ const run = async (year: number, args?: IRunOptions) => {
         await runInput(
           path.resolve(
             directory,
-            fileName,
-            options.test ? 'testInput' : 'input'
+            dayDirectoryName,
+            args.test ? 'testInput' : 'input'
           ),
           file[funcName],
-          Number(fileName),
+          year,
+          Number(dayDirectoryName),
           funcIdx + 1
-          // `Day ${fileName} - ${funcIdx + 1}`
         );
       }
 
@@ -78,19 +84,10 @@ const run = async (year: number, args?: IRunOptions) => {
 };
 
 const runYears = async () => {
-  const argsOptions: IRunOptions = {
-    today: args.today === true,
-    all: args.all === true,
-    test: args.test === true,
-  };
-
   const yearDirs = await readdir(path.resolve(__dirname, 'years'));
-  const years = argsOptions.all
-    ? yearDirs.map(Number)
-    : [new Date().getUTCFullYear()];
-
+  const years = args.all ? yearDirs.map(Number) : [new Date().getUTCFullYear()];
   for (const year of years) {
-    await run(year, argsOptions);
+    await run(year, args);
     console.log('\n');
   }
 };

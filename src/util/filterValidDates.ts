@@ -1,8 +1,13 @@
 export const filterValidDates =
-  (todayOnly = false) =>
+  (todayOnly = false, day?: number) =>
   (fileName: string) => {
     const date = Number(fileName);
     const now = new Date();
+
+    if (typeof day === 'number') {
+      return day === date;
+    }
+
     if (isNaN(date)) {
       // filter out template etc
       return false;

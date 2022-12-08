@@ -64,7 +64,10 @@ const partOneDecodeRound = (round: string[]): [1 | 2 | 3, 1 | 2 | 3] => {
 };
 
 export const partOne = (rawInput: string) => {
-  const rounds = rawInput.split('\n').map((round) => round.split(' '));
+  const rounds = rawInput
+    .split('\n')
+    .filter(Boolean)
+    .map((round) => round.split(' '));
   const scores = rounds.map(partOneDecodeRound).map(scoreRound);
   const yourScore = sum(scores.map((s) => s[1]));
   return yourScore;
@@ -97,7 +100,10 @@ const partTwoDecodeRound = (round: string[]): [1 | 2 | 3, 1 | 2 | 3] => {
 };
 
 export const partTwo = (rawInput: string) => {
-  const rounds = rawInput.split('\n').map((round) => round.split(' '));
+  const rounds = rawInput
+    .split('\n')
+    .filter(Boolean)
+    .map((round) => round.split(' '));
   const decoded = rounds.map(partTwoDecodeRound);
   const scores = decoded.map(scoreRound);
   const yourScore = sum(scores.map((s) => s[1]));

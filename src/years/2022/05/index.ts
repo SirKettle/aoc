@@ -10,7 +10,7 @@ const deserialize = (
     to: string;
   }[];
 } => {
-  const top = rawInput.split('\n\n')[0].split('\n');
+  const top = rawInput.split('\n\n')[0].split('\n').filter(Boolean);
   const containerCode = top.slice(0, -1);
   const containerIdsLine = last(top);
   const containerIds = containerIdsLine.split('').filter((c) => c !== ' ');
@@ -27,7 +27,10 @@ const deserialize = (
     },
     {}
   );
-  const instructionLines = rawInput.split('\n\n')[1].split('\n');
+  const instructionLines = rawInput
+    .split('\n\n')[1]
+    .split('\n')
+    .filter(Boolean);
   const instructions = instructionLines.map((line) => {
     const parts = line.split(' ');
     return {

@@ -1,6 +1,7 @@
 export const partOne = (rawInput: string) => {
   return rawInput
     .split('\n')
+    .filter(Boolean)
     .map((pair) =>
       pair
         .split(',')
@@ -25,6 +26,7 @@ export const partOne = (rawInput: string) => {
 export const partTwo = (rawInput: string) => {
   return rawInput
     .split('\n')
+    .filter(Boolean)
     .map((pair) =>
       pair
         .split(',')
