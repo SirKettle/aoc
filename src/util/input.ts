@@ -25,6 +25,9 @@ export const fetchInput = async (year: number, day: number) => {
       body: null,
       method: 'GET',
     });
+    if (response.status > 200) {
+      throw new Error(response.status.toString());
+    }
     console.log('Success ' + response.status);
     return response;
   } catch (err) {

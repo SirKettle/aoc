@@ -1,6 +1,15 @@
 import { sum } from 'ramda';
 
 export const partOne = (rawInput: string) => {
+  console.log(
+    sum(
+      rawInput
+        .split('\n\n')
+        .map((elf) => sum(elf.split('\n').map(Number)))
+        .sort((a, b) => (a > b ? -1 : 1))
+    )
+  );
+
   return ('\n' + rawInput)
     .split('\n\n')
     .map((elf) => sum(elf.split('\n').map(Number)))

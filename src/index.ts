@@ -15,7 +15,9 @@ interface IRunOptions {
   today?: boolean;
   all?: boolean;
   test?: boolean;
+  url?: boolean;
   day?: number;
+  year?: number;
 }
 
 const args = argsParser(process.argv);
@@ -31,11 +33,8 @@ export const runInput = async (
 ) => {
   try {
     const rawInput = await getRawInput(inputPath, year, day);
-    printResults(
-      day,
-      part,
-      timeSolution(() => func(rawInput))
-    );
+    const solution = timeSolution(() => func(rawInput));
+    printResults(day, part, solution);
   } catch (err) {
     printResults(day, part, { answer: err.message, timeMs: -1 });
   }
@@ -60,6 +59,10 @@ const run = async (year: number, args?: IRunOptions) => {
 
   for (const dayDirectoryName of filteredDirectories) {
     const file = require(path.resolve(directory, dayDirectoryName));
+    const day = Number(dayDirectoryName);
+    if (args.url) {
+      console.log(`\nhttps://adventofcode.com/${year}/day/${day}`);
+    }
 
     let funcIdx = 0;
     while (funcIdx < partFunctionNames.length) {
@@ -83,9 +86,17 @@ const run = async (year: number, args?: IRunOptions) => {
   }
 };
 
-const runYears = async () => {
+const getYearsToRun = async (): Promise<number[]> => {
+  if (args.year) {
+    return [args.year];
+  }
+
   const yearDirs = await readdir(path.resolve(__dirname, 'years'));
-  const years = args.all ? yearDirs.map(Number) : [new Date().getUTCFullYear()];
+  return args.all ? yearDirs.map(Number) : [new Date().getUTCFullYear()];
+};
+
+const runYears = async () => {
+  const years = await getYearsToRun();
   for (const year of years) {
     await run(year, args);
     console.log('\n');
@@ -93,3 +104,5 @@ const runYears = async () => {
 };
 
 runYears();
+
+console.log('\n');
